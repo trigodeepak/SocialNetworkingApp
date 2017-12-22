@@ -39,6 +39,9 @@
         <activity android:name=".GetfriendsActivity.getfriends" />
         <activity android:name=".messages.message" />
         <activity android:name=".conversation.coversation"></activity>
+        <service
+            android:name=".Services.LikeUpdateService"
+            android:exported="false"/>
     </application>
 
 </manifest>

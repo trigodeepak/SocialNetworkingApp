@@ -2,6 +2,7 @@ package com.example.deepak.socialnetworkingapp.MainActivity;
 
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.deepak.socialnetworkingapp.CommentActivity.comment;
 import com.example.deepak.socialnetworkingapp.R;
+import com.example.deepak.socialnetworkingapp.Services.LikeUpdateService;
 import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.squareup.picasso.Picasso;
 
@@ -45,7 +47,7 @@ import java.util.List;
 
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder>  {
+public final class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder>  {
     public List<Post> PostList;
 
     public int postId;   public Button CommentButton,ShareButton;
@@ -59,7 +61,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
         public TextView likeCount;
         public TextView commentCount;
         public ImageViewTouch myImage;
-        public  PhotoViewAttacher yourAttacher;
+        public PhotoViewAttacher yourAttacher;
+
         public MyViewHolder(View view) {
             super(view);
             mPostText = (TextView)view.findViewById( R.id.post_text);
@@ -120,9 +123,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
                 Log.e("The post id clicked is ", String.valueOf( postId ) );
                 Toast.makeText( holder.LikeButton.getContext(),"You liked this post",Toast.LENGTH_SHORT ).show();
                 setColorLikeButton(holder.LikeButton,holder.getAdapterPosition());
-
-                MysqlConLike mysqlConLike = new MysqlConLike();
-                mysqlConLike.execute( "like",String.valueOf(Uid),String.valueOf(postId) );
+                Intent mServiceIntent = new Intent(holder.LikeButton.getContext(), LikeUpdateService.class);
+                mServiceIntent.putExtra("Uid",Uid);
+                mServiceIntent.putExtra("postId",post.getPostId());
+                mServiceIntent.putExtra( "Pid",post.getProfileId() );
+                holder.LikeButton.getContext().startService( mServiceIntent );
             }
         });
 
@@ -145,10 +150,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
                 sharingIntent.setType("image/*");
-                String shareBody = url;
-                String shareSub = post.getPostImage().toString();
+                String shareSub = post.getPostImage();
                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSub);
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, url );
                 ShareButton.getContext().startActivity(Intent.createChooser(sharingIntent, "Share using"));
             }
         });
@@ -208,9 +212,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
         return PostList.size();
     }
 
-    //function to refresh recycler view on like button clicked
-    public void refreshPostRecyclerView(List<Post> postList){
-    }
 
     //Asynk task to add new Likes to a post
     class MysqlConLike extends AsyncTask<String,String,String>

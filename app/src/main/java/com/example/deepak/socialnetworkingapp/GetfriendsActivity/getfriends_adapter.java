@@ -32,9 +32,6 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-/**
- * Created by OMPRAKASH on 6/10/2017.
- */
 
 public class getfriends_adapter extends RecyclerView.Adapter<getfriends_adapter.MyViewHolder> {
 

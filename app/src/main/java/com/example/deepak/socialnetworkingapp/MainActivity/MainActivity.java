@@ -1,9 +1,6 @@
 package com.example.deepak.socialnetworkingapp.MainActivity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -82,6 +75,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener,LoaderManager.LoaderCallbacks<String> {
@@ -90,10 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView recyclerView;
     private PostAdapter mAdapter;
     private String email;
-    private TextView Useremail;
-    private TextView Username;
-    private ImageView UserImage;
-    private final int LOADER_ID = 50;
+    private static final int LOADER_ID = 50;
     private int flag=0;
 
     public String FetchData;
@@ -108,45 +99,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Button mpostUpload;
     public String type;
 
-
     private static final int SELECT_PICTURE = 100;
-    private static final String TAG = "MainActivity";
-
-    private String UPLOAD_URL = "https://socialnetworkapplication.000webhostapp.com/SocialNetwork/uploadPost.php";
     private String KEY_IMAGE = "image";
-    private String KEY_NAME = "name";
-    private Bitmap bitmap;
-    private String imageName;
-    private static final String LIFECYCLE = "callbacks";
-    static ArrayList<Post> postListtosave;
+    Bitmap bitmap;
 
-    private ProgressBar progressBar;
+    @BindView(R.id.post_progress)
+    ProgressBar progressBar;
+
     private TextView progressText;
-    //To show progress when the data is being fetched
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+
     public void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-            progressText.setVisibility(show ? View.VISIBLE : View.GONE);
-            progressBar.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
             progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
             progressText.setVisibility(show ? View.VISIBLE : View.GONE);
 
-        }
     }
 
     @Override
@@ -178,16 +143,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
-        Useremail = (TextView)header.findViewById(R.id.user_email);
-        UserImage = (ImageView)header.findViewById(R.id.user_image);
-        Username = (TextView)header.findViewById(R.id.user_name);
+        TextView useremail = (TextView) header.findViewById( R.id.user_email );
+        ImageView userImage = (ImageView) header.findViewById( R.id.user_image );
+        TextView username = (TextView) header.findViewById( R.id.user_name );
 //        getUserDetails();
-        Useremail.setText(email);
-        Username.setText(Uname);
-        Picasso.with(UserImage.getContext())
+        useremail.setText(email);
+        username.setText(Uname);
+        Picasso.with( userImage.getContext())
                 .load("https://socialnetworkapplication.000webhostapp.com/SocialNetwork/"+Uprofilepicture)
                 .resize(50, 50).centerCrop()
-                .into(UserImage);
+                .into( userImage );
 
         getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         mstatusUpload = (EditText)findViewById(R.id.statusUpload);
@@ -199,18 +164,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //To create the recycler view
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view_post);
-        preparePostData();
+        recyclerView.setHasFixedSize(true);
+        preparePostData(1);
 
     }
 
 
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState( outState, outPersistentState );
-        Log.e( "SAving instance","Inside on saved instance statehiucfyfuyfufuy");
-        postListtosave = postList;
-        outState.putParcelableArrayList(LIFECYCLE, (ArrayList<? extends Parcelable>) postListtosave );
-    }
 
     /* Choose an image from Gallery */
     void openImageChooser() {
@@ -234,17 +193,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public String getPathFromURI(Uri contentUri) {
-        String res = null;
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
-        if (cursor.moveToFirst()) {
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            res = cursor.getString(column_index);
-        }
-        cursor.close();
-        return res;
-    }
+//    public String getPathFromURI(Uri contentUri) {
+//        String res = null;
+//        String[] proj = {MediaStore.Images.Media.DATA};
+//        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+//        if (cursor.moveToFirst()) {
+//            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//            res = cursor.getString(column_index);
+//        }
+//        cursor.close();
+//        return res;
+//    }
 
     public String getStringImage(Bitmap bmp){
         bmp = ((BitmapDrawable) mimageUpload.getDrawable()).getBitmap();
@@ -258,14 +217,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void uploadImage(){
         //Showing the progress dialog
         final ProgressDialog loading = ProgressDialog.show(this,"Uploading...","Please wait...",false,false);
+        String UPLOAD_URL = "https://socialnetworkapplication.000webhostapp.com/SocialNetwork/uploadPost.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
                         //Disimissing the progress dialog
-
                         loading.dismiss();
-                        preparePostData();
+                        preparePostData(1);
                         Drawable img = getApplicationContext().getResources().getDrawable(R.drawable.ic_menu_camera);
                         mimageUpload.setImageDrawable(img);
                         mstatusUpload.setText(null);
@@ -288,19 +247,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 image = image + getStringImage(bitmap);
                 String text = mstatusUpload.getText().toString();
 
-                //Getting Image Name
-                //String name = editTextName.getText().toString().trim();
-
                 //Creating parameters
                 Map<String,String> params = new Hashtable<String, String>();
-
                 //Adding parameters
                 params.put(KEY_IMAGE, image);
                 params.put("email",email);
                 params.put("text",text);
                 params.put("group_id",group_id);
-                //params.put("name", imageName);
-
                 //returning parameters
                 return params;
             }
@@ -321,23 +274,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(MainActivity.this, "You clicked on ImageView", Toast.LENGTH_LONG).show();
             openImageChooser();
         }
-
         if(v == mpostUpload){
             uploadImage();
         }
     }
 
 
-    private void preparePostData() {
+    private void preparePostData(int i) {
         //Function to populate the post list
         Bundle postQueryBundle = new Bundle( );
         postQueryBundle.putString( "type","post" );
         postQueryBundle.putString( "group_id",group_id );
-
         LoaderManager loaderManager = getSupportLoaderManager();
         Loader<String> postLoader = loaderManager.getLoader( LOADER_ID );
-        if(postList != null) {
-            loaderManager.initLoader( LOADER_ID, postQueryBundle, this ).forceLoad();
+        if(i==1){
+        loaderManager.initLoader( LOADER_ID, postQueryBundle, this ).forceLoad();}
+        else{
+            loaderManager.initLoader( LOADER_ID, postQueryBundle, this );
         }
     }
 
@@ -351,9 +304,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             for (int i = 0; i < jsonArray.length(); i++) {
                 Post post = new Post();
                 JSONObject reader = jsonArray.getJSONObject(i);
-                Log.i("Json",reader.toString());
-                String read = reader.toString();
-                Log.i( "Json", String.valueOf( post.getProfileId() ) );
                 post.setPostImage(reader.getString("post_image"));
                 post.setPostText( reader.getString("post_text") );
                 post.setProfileId( Integer.parseInt( reader.getString( "profile_id" ) ) );
@@ -365,14 +315,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 post.setLikesNumber( reader.getString( "likes_count" ) );
                 post.setCommentsNumber( reader.getString( "comments_count" ) );
                 postList.add(i,post);
-                Log.i( "Json post list", postList.get(i).getPostText() );
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
-//            Log.e( "jsonerror","Error in parsing json" );
         }
-
         return postList;
     }
 
@@ -416,8 +362,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-//            Intent intent = new Intent(MainActivity.this,upload.class);
-
             startActivity(new Intent(MainActivity.this,upload.class).putExtra("email",email));
 
         } else if (id == R.id.nav_notification) {
@@ -433,7 +377,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_logout) {
             startActivity(new Intent(MainActivity.this,LoginActivity.class));
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -441,15 +384,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    //function to refresh recycler view on like button clicked
-    public void refreshPostRecyclerView(List<Post> postList){
-        mAdapter = new PostAdapter(postList,Uid);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
-
-    }
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -457,18 +391,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         showProgress( true );
         return new AsyncTaskLoader<String>(this) {
             String jsonArray;
-
             @Override
             protected void onStartLoading() {
                 if(bundle == null)
                     return;
-//                if (jsonArray != null){
-//                    deliverResult( jsonArray );
-//                }
-//                else {
-//                    forceLoad();
-//                }
-
+                if(jsonArray != null ){
+                    deliverResult( jsonArray );
+                }
+                else forceLoad();
             }
 
             @Override
@@ -489,7 +419,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
 
                     String post_data = URLEncoder.encode("group_id", "UTF-8") + "=" + URLEncoder.encode(group_id, "UTF-8");
-
 
                     bufferedWriter.write(post_data);
                     bufferedWriter.flush();
@@ -520,6 +449,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 return null;
             }
+
+            @Override
+            public void deliverResult(String data) {
+                jsonArray = data;
+                super.deliverResult( data );
+            }
         };
     }
 
@@ -539,8 +474,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onLoaderReset(Loader<String> loader) {
-
-    }
+    public void onLoaderReset(Loader<String> loader) {}
 }
 

@@ -306,6 +306,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
         };
 
+
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
     }

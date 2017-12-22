@@ -92,7 +92,6 @@ public class comment extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById( R.id.comment_progress );
         progressText = (TextView) findViewById( R.id.comment_progress_text );
 
-
         Uid = getIntent().getExtras().getInt("Uid");
         Pid = getIntent().getExtras().getInt("Pid");
         postId = getIntent().getExtras().getInt("postId");
@@ -112,6 +111,7 @@ public class comment extends AppCompatActivity {
                 MysqlCon mysqlCon = new MysqlCon();
                 mysqlCon.execute("comment",et_comment_text.getText().toString(),String.valueOf(postId),String.valueOf(Uid),String.valueOf(Pid));
                 et_comment_text.setText( "" );
+
             }});
     }
 
@@ -201,6 +201,7 @@ public class comment extends AppCompatActivity {
         }
     }
 
+    //Asynk to fetch comments data
     class MysqlConCommentShow extends AsyncTask<String,String,String>
     {
         @Override
