@@ -7,5 +7,18 @@ It includes :
   - User can add them into the groups(Then a person will only receive updates of the groups he/she have joined)
   
   The link of the apk is :
-  https://github.com/trigodeepak/SocialNetworkingApp/blob/master/app/build/outputs/apk/debug/app-debug.apk
-  
+  https://github.com/trigodeepak/SocialNetworkingApp/blob/master/Social%20Networking%20.apk
+
+Screenshots:
+	- Login Activity
+	![Login](/screenshots/login.png?raw=true "Login Activity")
+	- Post Activity
+	![post](/screenshots/post.png?raw=true "post Activity")
+	![Comment](/screenshots/commentonpost.png?raw=true "Comment Activity")
+	![Likes](/screenshots/likeonpost.png?raw=true "Post Activity")
+	- Messaging
+	![conversation](/screenshots/conversation.png?raw=true "converstion Activity")
+	![Messages users](/screenshots/message.png?raw=true "Message users Activity")
+	- Profile of User
+	![Profile](/screenshots/profile.png?raw=true "Profile Activity")
+	
