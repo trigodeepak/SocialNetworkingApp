@@ -10,15 +10,10 @@ It includes :
   https://github.com/trigodeepak/SocialNetworkingApp/blob/master/Social%20Networking%20.apk
 
 Screenshots:
-	- Login Activity
-	![Login](/screenshots/login.png?raw=true "Login Activity")
-	- Post Activity
-	![post](/screenshots/post.png?raw=true "post Activity")
-	![Comment](/screenshots/commentonpost.png?raw=true "Comment Activity")
-	![Likes](/screenshots/likeonpost.png?raw=true "Post Activity")
-	- Messaging
-	![conversation](/screenshots/conversation.png?raw=true "converstion Activity")
-	![Messages users](/screenshots/message.png?raw=true "Message users Activity")
-	- Profile of User
-	![Profile](/screenshots/profile.png?raw=true "Profile Activity")
-	
+	<img src="/screenshots/login.png" width="200">
+	<img src="/screenshots/post.png" width="200">
+	<img src="/screenshots/commentonpost.png" width="200">
+	<img src="/screenshots/likeonpost.png" width="200">
+	<img src="/screenshots/conversation.png" width="200">
+	<img src="/screenshots/message.png" width="200">
+	<img src="/screenshots/profile.png" width="200">
